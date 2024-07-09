@@ -1,12 +1,15 @@
 import streamlit as st
 import time
-import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import GaussianNB, BernoulliNB, MultinomialNB
-from sklearn.ensemble import VotingClassifier
 import pickle
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.ensemble import VotingClassifier
 from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
+import nltk
+
+# Ensure NLTK stopwords and punkt are downloaded
+nltk.download('stopwords')
+nltk.download('punkt')
 
 # Load the vectorizer
 with open('tfidf.pkl', 'rb') as vectorizer_file:
@@ -20,7 +23,6 @@ with open('best_model.pkl', 'rb') as model_file:
 stop_words = set(stopwords.words('english'))
 ps = PorterStemmer()
 
-
 def preprocess_input(input_text):
     input_text = input_text.lower()
     input_text = input_text.replace(r'[^\w\s]+', '')
@@ -28,12 +30,10 @@ def preprocess_input(input_text):
     input_vectorized = vectorizer.transform([input_text]).toarray()
     return input_vectorized
 
-
 def predict_class(input_text):
     processed_input = preprocess_input(input_text)
     prediction = voting_classifier.predict(processed_input)
     return prediction[0]
-
 
 # Streamlit app
 st.set_page_config(
@@ -46,8 +46,6 @@ st.set_page_config(
 # Styles
 main_bg_color = "#E6E6FA"  # Lavender color
 main_text_color = "#000000"  # Black text
-button_bg_color = "#3498DB"  # Blue button
-button_text_color = "#FFFFFF"  # White text on the button
 
 # Colored background for the body
 colored_style = f"""
@@ -98,3 +96,6 @@ st.markdown(
     """,
     unsafe_allow_html=True,
 )
+
+import warnings
+warnings.filterwarnings('ignore')
